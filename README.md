@@ -5,7 +5,7 @@ like the bridge of a starship, and Tiberius is the result: a sci-fi HUD theme fo
 
 Yet another DAMN Project.
 
-![Tiberius](media/tiberius-1-start-menu.png)
+![Tiberius](media/tiberius-main.png)
 
 There is a short [video](media/tiberius-desktop.mp4) too, to see the wallpaper moving.
 
@@ -20,9 +20,15 @@ There is a short [video](media/tiberius-desktop.mp4) too, to see the wallpaper m
 - Cursors
 - Clock with a calendar, and a keyboard layout indicator
 
+![Start menu](media/tiberius-1-start-menu.png)
+
 ![Windows](media/tiberius-2-windows.png)
 
 ![App style](media/app-style.png)
+
+### Cursors
+
+![Cursors](media/cursors.png)
 
 ## Installing
 
