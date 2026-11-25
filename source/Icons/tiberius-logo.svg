@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <polyline points="23.50,18.22 28.50,9.56 35.50,9.56 40.50,18.22" fill="none" stroke="#d6f7f3" stroke-width="6.4" stroke-linejoin="miter" stroke-miterlimit="8"/>
+  <line x1="20.79" y1="20.12" x2="17.79" y2="25.32" stroke="#22d3c5" stroke-width="3.6"/>
+  <line x1="43.21" y1="20.12" x2="46.21" y2="25.32" stroke="#22d3c5" stroke-width="3.6"/>
+  <polygon points="26.50,24.59 32.00,15.06 37.50,24.59 32.00,20.06" fill="#f28c38"/>
+  <polyline points="52.08,38.28 57.08,46.94 53.58,53.00 43.58,53.00" fill="none" stroke="#d6f7f3" stroke-width="6.4" stroke-linejoin="miter" stroke-miterlimit="8"/>
+  <line x1="51.79" y1="34.98" x2="48.79" y2="29.78" stroke="#22d3c5" stroke-width="3.6"/>
+  <line x1="40.58" y1="54.40" x2="34.58" y2="54.40" stroke="#22d3c5" stroke-width="3.6"/>
+  <polygon points="45.07,37.69 50.57,47.22 39.57,47.22 46.24,44.72" fill="#f28c38"/>
+  <polyline points="20.42,53.00 10.42,53.00 6.92,46.94 11.92,38.28" fill="none" stroke="#d6f7f3" stroke-width="6.4" stroke-linejoin="miter" stroke-miterlimit="8"/>
+  <line x1="23.42" y1="54.40" x2="29.42" y2="54.40" stroke="#22d3c5" stroke-width="3.6"/>
+  <line x1="12.21" y1="34.98" x2="15.21" y2="29.78" stroke="#22d3c5" stroke-width="3.6"/>
+  <polygon points="24.43,47.22 13.43,47.22 18.93,37.69 17.76,44.72" fill="#f28c38"/>
+  <polygon points="30.86,32.48 33.14,32.48 36.05,37.52 34.91,39.50 29.09,39.50 27.95,37.52" fill="#22d3c5"/>
+</svg>

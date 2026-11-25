@@ -1,0 +1,38 @@
+TIBERIUS - a sci-fi HUD theme for KDE Plasma 6
+==============================================
+
+INSTALL
+ 1. Install the two helper programs (they draw the windows and buttons). In a terminal:
+      Fedora:           sudo dnf install kvantum aurorae
+      Arch / CachyOS:   sudo pacman -S kvantum aurorae
+      Debian / Ubuntu:  sudo apt install qt-style-kvantum
+ 2. Unpack Tiberius-theme.zip, open the Tiberius-theme folder, right-click an empty
+    spot and choose "Open Terminal Here". Type:
+      bash install.sh
+ 3. Log out and back in. The look is now on.
+
+ 4. Finishing touches (optional):
+    - Clock:    right-click the panel > Add or Manage Widgets, search "Tiberius",
+                drag "Tiberius Clock" (and "Tiberius Keyboard Layout" if you use two
+                languages) onto the panel. Right-click the old clock > Remove.
+    - Menu:     right-click the Start button > Configure > click the icon > Choose,
+                search "tiberius-logo".
+    - Panel:    46 pixels high and floating looks best (right-click > Show Panel Configuration).
+    - Moving wallpaper: right-click the desktop > Desktop and Wallpaper > Get New Plugins,
+                install "Smart Video Wallpaper Reborn", select it, and add this video:
+                ~/.local/share/wallpapers/Tiberius/tiberius-hud.webm
+
+GO BACK
+    In the same folder:   bash install.sh --uninstall
+    Your settings from before are restored. Log out and back in.
+
+GOOD TO KNOW
+    - Nothing is installed system-wide; no password is needed for the theme itself.
+    - Firefox, VSCode and some other apps draw their own windows and keep their look.
+    - If windows look cut off at the bottom-right: System Settings > Window Decorations >
+      Tiberius > set the border size to "Very Large".
+
+CREDITS
+    Made by Rey Osman. Licence: GPL 3 or later (see LICENSE).
+    Oxanium font (SIL Open Font License 1.1). Icon glyphs: Material Symbols by Google
+    (Apache License 2.0, modified). Everything else was made for this theme.

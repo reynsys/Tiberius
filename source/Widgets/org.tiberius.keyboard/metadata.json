@@ -1,0 +1,14 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [{"Name": "Rey Osman"}],
+        "Category": "System Information",
+        "Description": "Orange HUD keyboard layout indicator",
+        "Icon": "input-keyboard",
+        "Id": "org.tiberius.keyboard",
+        "License": "GPL-3.0-or-later",
+        "Name": "Tiberius Keyboard Layout",
+        "Version": "0.1"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
