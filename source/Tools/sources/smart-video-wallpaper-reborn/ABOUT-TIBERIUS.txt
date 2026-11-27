@@ -1,0 +1,4 @@
+Smart Video Wallpaper Reborn 2.17.0, by Luis Bocanegra, Rog131 and adhe.
+Licence: GPL 2 or later (see LICENSE). Unchanged copy, included so the Tiberius
+installer can play the moving wallpaper without extra downloads.
+Home page and newest version: https://github.com/luisbocanegra/plasma-smart-video-wallpaper-reborn

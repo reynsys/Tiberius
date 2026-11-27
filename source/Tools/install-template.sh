@@ -9,12 +9,27 @@ BACKUP="$DATA/tiberius-backup"
 FILES="kdeglobals kwinrc kcminputrc plasmarc ksplashrc klaunchrc"
 QDBUS=$(command -v qdbus-qt6 || command -v qdbus6 || command -v qdbus)
 
+VIDEO_ID=luisbocanegra.smart.video.wallpaper.reborn
+
 reload() {
     [ -n "$QDBUS" ] && "$QDBUS" org.kde.KWin /KWin reconfigure >/dev/null 2>&1
+}
+# Runs a small script inside the desktop (plasmashell) and prints what it prints.
+desktop_script() {
+    [ -n "$QDBUS" ] && "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$1" 2>/dev/null
+}
+# Still picture on every desktop. $1 = picture file, or empty for the Plasma default.
+set_picture() {
+    desktop_script "desktops().forEach(function(d){d.wallpaperPlugin='org.kde.image';
+        d.currentConfigGroup=['Wallpaper','org.kde.image','General'];
+        d.writeConfig('Image', '$1' ? 'file://$1' : '');});" >/dev/null
 }
 
 if [ "$1" = "--uninstall" ]; then
     echo "Restoring your old settings..."
+    OLD=$(cat "$BACKUP/wallpaper.txt" 2>/dev/null)
+    case "$OLD" in file://*Tiberius*|"") set_picture "" ;; file://*) set_picture "${OLD#file://}" ;; esac
+    if [ -f "$BACKUP/.installed-video-addon" ]; then rm -rf "$DATA/plasma/wallpapers/$VIDEO_ID"; fi
     plasma-apply-lookandfeel -a org.kde.breezedark.desktop >/dev/null 2>&1
     for f in $FILES; do
         if [ -f "$BACKUP/$f" ]; then cp "$BACKUP/$f" "$CONF/$f"
@@ -38,14 +53,17 @@ VER=$(plasmashell --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+' | head -1)
 
 find_plugin() { find /usr/lib* /usr/local/lib* -path "*$1" -print -quit 2>/dev/null; }
 KV=$(find_plugin "plugins/styles/libkvantum.so"); AU=$(find_plugin "org.kde.kdecoration3/org.kde.kwin.aurorae.v2.so")
+MM=$(find_plugin "qt6/qml/QtMultimedia/qmldir")
 MISSING=""
 [ -z "$KV" ] && MISSING="$MISSING kvantum"
 [ -z "$AU" ] && MISSING="$MISSING aurorae"
+[ -z "$MM" ] && MISSING="$MISSING qt-multimedia(moving-wallpaper)"
 if [ -n "$MISSING" ]; then
     echo "These helper programs are not installed:$MISSING"
-    echo "  Fedora:            sudo dnf install kvantum aurorae"
-    echo "  Arch / CachyOS:    sudo pacman -S kvantum aurorae"
-    echo "  Debian / Ubuntu:   sudo apt install qt-style-kvantum   (look for an aurorae package too)"
+    echo "  Fedora:            sudo dnf install kvantum aurorae qt6-qtmultimedia"
+    echo "  Arch / CachyOS:    sudo pacman -S kvantum aurorae qt6-multimedia qt6-multimedia-ffmpeg"
+    echo "  Debian / Ubuntu:   sudo apt install qt-style-kvantum qml6-module-qtmultimedia   (look for an aurorae package too)"
+    echo "Without qt-multimedia you get the still wallpaper instead of the moving one."
     read -r -p "Continue without those parts? [y/N] " a
     [ "$a" = y ] || [ "$a" = Y ] || { echo "Nothing was changed."; exit 1; }
 fi
@@ -55,6 +73,9 @@ if [ ! -d "$BACKUP" ]; then            # never overwrite the first backup
     mkdir -p "$BACKUP"
     for f in $FILES; do if [ -f "$CONF/$f" ]; then cp "$CONF/$f" "$BACKUP/$f"; else touch "$BACKUP/.absent-$f"; fi; done
     if [ -f "$CONF/Kvantum/kvantum.kvconfig" ]; then cp "$CONF/Kvantum/kvantum.kvconfig" "$BACKUP/"; else touch "$BACKUP/.absent-kvantum.kvconfig"; fi
+    desktop_script "desktops().forEach(function(d,i){if(i)return;
+        d.currentConfigGroup=['Wallpaper','org.kde.image','General'];
+        print(d.wallpaperPlugin=='org.kde.image' ? d.readConfig('Image','') : '');});" > "$BACKUP/wallpaper.txt"
 fi
 
 echo "2/4 Copying the theme..."
@@ -73,6 +94,11 @@ ln -sfn "$DATA/icons/Tiberius-cursors" "$HOME/.icons/Tiberius-cursors"
 for w in clock keyboard; do
     d="$DATA/plasma/plasmoids/org.tiberius.$w"; rm -rf "$d"; mkdir -p "$d"; tar xzf "files/org.tiberius.$w.tar.gz" -C "$d"
 done
+# Video wallpaper add-on (Smart Video Wallpaper Reborn, GPL 2+). Kept as is if you already have it.
+if [ ! -d "$DATA/plasma/wallpapers/$VIDEO_ID" ] && [ ! -d "/usr/share/plasma/wallpapers/$VIDEO_ID" ]; then
+    put smart-video-wallpaper-reborn.tar.gz "$DATA/plasma/wallpapers/$VIDEO_ID"
+    touch "$BACKUP/.installed-video-addon"
+fi
 
 echo "3/4 Switching it on..."
 [ -n "$KV" ] && printf '[General]\ntheme=Tiberius\n' > "$CONF/Kvantum/kvantum.kvconfig"
@@ -96,7 +122,23 @@ fi
 reload
 
 echo "4/4 Setting the wallpaper..."
-plasma-apply-wallpaperimage "$DATA/wallpapers/Tiberius/tiberius-hud.png" >/dev/null 2>&1
+PIC="$DATA/wallpapers/Tiberius/tiberius-hud.png"; VID="$DATA/wallpapers/Tiberius/tiberius-hud.webm"
+set_picture "$PIC"
+WP=still
+if [ -n "$MM" ]; then
+    desktop_script "desktops().forEach(function(d){d.wallpaperPlugin='$VIDEO_ID';
+        d.currentConfigGroup=['Wallpaper','$VIDEO_ID','General'];
+        d.writeConfig('VideoUrls', JSON.stringify([{filename:'file://$VID',enabled:true,duration:0,
+            customDuration:0,playbackRate:0,alternativePlaybackRate:0,loop:true,dayNightCycleAssignment:0}]));
+        d.writeConfig('LastVideo','file://$VID');
+        d.writeConfig('BackgroundColor','#0c0e11'); d.writeConfig('FillMode',2);
+        d.writeConfig('PauseMode',0); d.writeConfig('MuteMode',5);
+        d.writeConfig('BatteryPausesVideo',false);});" >/dev/null
+    [ "$(desktop_script "print(desktops()[0].wallpaperPlugin)")" = "$VIDEO_ID" ] && WP=moving
+fi
+[ "$WP" = still ] && plasma-apply-wallpaperimage "$PIC" >/dev/null 2>&1
 echo
+if [ "$WP" = moving ]; then echo "Wallpaper: the moving Tiberius video is on."
+else echo "Wallpaper: the still picture is on (the moving one needs qt-multimedia, see above, then run install.sh again)."; fi
 echo "Tiberius is installed. Now LOG OUT and back in."
-echo "Then see INSTRUCTIONS.txt, step 4, for the clock, the menu logo and the moving wallpaper."
+echo "Then see INSTRUCTIONS.txt, step 4, for the clock and the menu logo."

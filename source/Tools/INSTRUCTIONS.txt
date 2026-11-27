@@ -2,14 +2,17 @@ TIBERIUS - a sci-fi HUD theme for KDE Plasma 6
 ==============================================
 
 INSTALL
- 1. Install the two helper programs (they draw the windows and buttons). In a terminal:
-      Fedora:           sudo dnf install kvantum aurorae
-      Arch / CachyOS:   sudo pacman -S kvantum aurorae
-      Debian / Ubuntu:  sudo apt install qt-style-kvantum
+ 1. Install the helper programs (they draw the windows and buttons, and play the
+    moving wallpaper). In a terminal:
+      Fedora:           sudo dnf install kvantum aurorae qt6-qtmultimedia
+      Arch / CachyOS:   sudo pacman -S kvantum aurorae qt6-multimedia qt6-multimedia-ffmpeg
+      Debian / Ubuntu:  sudo apt install qt-style-kvantum qml6-module-qtmultimedia
  2. Unpack Tiberius-theme.zip, open the Tiberius-theme folder, right-click an empty
     spot and choose "Open Terminal Here". Type:
       bash install.sh
- 3. Log out and back in. The look is now on.
+ 3. Log out and back in. The look is now on, with the moving wallpaper.
+    (Plasma can't play video wallpapers by itself. The installer adds the free
+    "Smart Video Wallpaper Reborn" add-on and sets the Tiberius video for you.)
 
  4. Finishing touches (optional):
     - Clock:    right-click the panel > Add or Manage Widgets, search "Tiberius",
@@ -18,9 +21,6 @@ INSTALL
     - Menu:     right-click the Start button > Configure > click the icon > Choose,
                 search "tiberius-logo".
     - Panel:    46 pixels high and floating looks best (right-click > Show Panel Configuration).
-    - Moving wallpaper: right-click the desktop > Desktop and Wallpaper > Get New Plugins,
-                install "Smart Video Wallpaper Reborn", select it, and add this video:
-                ~/.local/share/wallpapers/Tiberius/tiberius-hud.webm
 
 GO BACK
     In the same folder:   bash install.sh --uninstall
@@ -29,10 +29,16 @@ GO BACK
 GOOD TO KNOW
     - Nothing is installed system-wide; no password is needed for the theme itself.
     - Firefox, VSCode and some other apps draw their own windows and keep their look.
+    - Still picture instead of the moving one? The installer tells you at the end.
+      Install the multimedia package from step 1 and run  bash install.sh  again.
+    - The video pauses while a window is maximised or full screen, to save power.
     - If windows look cut off at the bottom-right: System Settings > Window Decorations >
       Tiberius > set the border size to "Very Large".
 
 CREDITS
     Made by Rey Osman. Licence: GPL 3 or later (see LICENSE).
     Oxanium font (SIL Open Font License 1.1). Icon glyphs: Material Symbols by Google
-    (Apache License 2.0, modified). Everything else was made for this theme.
+    (Apache License 2.0, modified). Video wallpaper add-on: Smart Video Wallpaper Reborn
+    by Luis Bocanegra (GPL 2 or later, included unchanged,
+    github.com/luisbocanegra/plasma-smart-video-wallpaper-reborn).
+    Everything else was made for this theme.
