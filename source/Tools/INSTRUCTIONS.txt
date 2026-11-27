@@ -22,6 +22,10 @@ INSTALL
                 search "tiberius-logo".
     - Panel:    46 pixels high and floating looks best (right-click > Show Panel Configuration).
 
+UPDATE TO A NEWER VERSION
+    Download the newest Tiberius-theme.zip (KDE Store page or github.com/reynsys/Tiberius),
+    unpack it and run  bash install.sh  again. Log out and back in.
+
 GO BACK
     In the same folder:   bash install.sh --uninstall
     Your settings from before are restored. Log out and back in.

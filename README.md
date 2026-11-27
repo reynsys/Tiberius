@@ -57,6 +57,24 @@ see [INSTRUCTIONS.txt](INSTRUCTIONS.txt).
 
 Don't like it? `bash install.sh --uninstall` puts your old settings back.
 
+## Updating
+
+There is no automatic update. When a new version comes out:
+
+- **Installed with `install.sh`:** download the repo again (Code > Download ZIP), unpack it and run
+  `bash install.sh` again, then log out and back in. Your settings from before the very first install
+  stay saved, so `--uninstall` still brings them back.
+- **Installed from System Settings or Discover (KDE Store):** Discover lists Tiberius under Updates,
+  or open the same "Get New…" window and click Update.
+
+Click **Watch > Custom > Releases** at the top of this page to get an email when there is a new version.
+
+### Changes
+
+- **1.1** HUD notification bell (normal, new, do not disturb), HUD expand arrow in the system tray,
+  and HUD tray icons for low battery, power profiles, flight mode, touchpad, camera and microphone in use.
+- **1.0** First release.
+
 ## Good to know
 
 - So far it has only been tested on Fedora with Plasma 6.8. If it breaks on yours, open an issue and tell me what happened.

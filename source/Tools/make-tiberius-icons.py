@@ -13,7 +13,7 @@ Anything not covered falls back to Breeze Dark.
 
 Usage: make-tiberius-icons.py <material-symbols-sharp-dir> <output-theme-dir>
 """
-import os
+import subprocess, os
 import re
 import shutil
 import sys
@@ -95,7 +95,13 @@ def _battery(n):
     if "missing" in n or "error" in n:
         return "battery_error"
     if not m:
-        return "battery_charging_full" if "charg" in n else ("battery_full" if "full" in n else None)
+        if re.search(r"profile-(powersave|power-saver)", n): return "eco"
+        if "profile-performance" in n: return "speed"
+        if "profile-balanced" in n: return "balance"
+        if "charg" in n: return "battery_charging_full"
+        if re.search(r"caution|empty|low", n): return "battery_alert"
+        if "good" in n: return "battery_5_bar"
+        return "battery_full" if "full" in n else None
     v = int(m.group(1))
     if "charging" in n:
         for lim, g in ((20, "battery_charging_20"), (30, "battery_charging_30"), (50, "battery_charging_50"),
@@ -110,7 +116,16 @@ STATUS = [
     (r"^network-wireless|wifi|hotspot", _wifi),
     (r"^network-(wired|connect)|ethernet", "lan"), (r"^network-vpn", "vpn_lock"),
     (r"^network-mobile|cellular|modem", "signal_cellular_alt"),
-    (r"^network-(offline|disconnect)|^network-limited", "link_off"), (r"airplane", "flight"),
+    (r"^network-(offline|disconnect)|^network-limited|^network-unavailable|^nm-no-connection", "link_off"),
+    (r"^nm-signal", _wifi), (r"^nm-device-wired", "lan"),
+    (r"flightmode-off", "airplanemode_inactive"), (r"airplane|flightmode", "flight"),
+    (r"touchpad.*(off|disabled)", "touchpad_mouse_off"), (r"touchpad", "touchpad_mouse"),
+    (r"^input-caps-on", "keyboard_capslock"), (r"^keyboard-layout", "keyboard"),
+    (r"^camera-off|^video-off", "videocam_off"), (r"^camera-(on|ready)", "videocam"),
+    (r"^mic-(on|ready)", "mic"), (r"^system-suspend-inhibited", "coffee"),
+    (r"^system-suspend-uninhibited", "bedtime"),
+    (r"^state-download", "download"), (r"^state-offline", "cloud_off"), (r"^state-ok|^task-complete", "check_circle"),
+    (r"^state-pause", "pause"), (r"^state-sync", "sync"), (r"^media-playback-stopped", "stop"),
     (r"^battery|^laptop-battery", _battery),
     (r"audio-volume-muted|audio-off", "volume_off"), (r"audio-volume-high", "volume_up"),
     (r"audio-volume-(medium|low)", "volume_down"), (r"audio-volume", "volume_mute"),
@@ -118,7 +133,9 @@ STATUS = [
     (r"keyboard-brightness", "keyboard"), (r"night-light|redshift", "nightlight"),
     (r"brightness-low|low-brightness", "brightness_5"), (r"brightness", "brightness_7"),
     (r"klipper|clipboard", "content_paste"),
-    (r"notification.*(disabled|inactive)", "notifications_off"), (r"notification", "notifications"),
+    # bell: disabled = Do Not Disturb, active = something new, everything else = plain bell
+    (r"^notifications?-disabled", "notifications_off"), (r"^notification-active", "notifications_active"),
+    (r"^notifications?($|-)", "notifications"),
     (r"bluetooth.*(disabled|inactive|offline)", "bluetooth_disabled"),
     (r"bluetooth.*(active|online|connected)", "bluetooth_connected"), (r"bluetooth", "bluetooth"),
     (r"update", "browser_updated"),
@@ -218,7 +235,7 @@ def main(gdir, dst):
     table["categories"]["applications-electronics"] = "memory"
     for c in ("preferences", "actions", "devices"):
         table["status"].update({n: pick(n, STATUS) for n in breeze_names(c, True)
-                                if re.search(r"brightness|night-light|redshift", n)})
+                                if re.search(r"brightness|night-light|redshift|^notifications?($|-)", n)})
     # panel applets often ask for "<name>-symbolic" even where Breeze has no such file
     for n in list(table["status"]):
         if not n.endswith("-symbolic"):
@@ -254,6 +271,18 @@ def main(gdir, dst):
                     f.write(small_icon(p, size))
             written += 1
 
+    # The system tray's expand arrow (and a few Kirigami arrows) use these names. Plain sharp
+    # teal chevrons, no plate, so they also sit well inside apps that use them.
+    chevrons = {"up": "3,11 8,5.5 13,11", "down": "3,5 8,10.5 13,5",
+                "left": "11,3 5.5,8 11,13", "right": "5,3 10.5,8 5,13"}
+    for d, pts in chevrons.items():
+        svg = ('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">'
+               f'<polyline points="{pts}" fill="none" stroke="{TEAL}" stroke-width="2" '
+               'stroke-linejoin="miter" stroke-linecap="square"/></svg>')
+        for size in [str(x) for x in small_sizes] + ["scalable"]:
+            with open(os.path.join(dst, size, "actions", f"arrow-{d}-symbolic.svg"), "w") as f:
+                f.write(svg)
+
     ctxname = {"apps": "Applications", "places": "Places", "mimetypes": "MimeTypes", "devices": "Devices",
                "categories": "Categories", "status": "Status",
                "actions": "Actions"}
@@ -275,6 +304,8 @@ def main(gdir, dst):
         shutil.copy(logo, os.path.join(dst, "scalable", "apps", "tiberius-logo.svg"))
     with open(os.path.join(dst, "index.theme"), "w") as f:
         f.write("\n".join(lines))
+    if shutil.which("gtk-update-icon-cache"):    # lookup cache, as the old installs had
+        subprocess.run(["gtk-update-icon-cache", "-f", "-q", "-t", dst], check=False)
     print(f"wrote {written} icons ({len(cache)} distinct glyphs) -> {dst}")
 
 
